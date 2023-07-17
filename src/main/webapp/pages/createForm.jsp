@@ -29,12 +29,12 @@
                 <input class="border-solid" type="text" name="name" placeholder="Enter product name" required/><br>
                 <label>Price:</label><br>
                 <input class="border-solid" type="text" name="price" placeholder="Enter price" required/><br>
-<%--                <label>Address:</label><br>--%>
-<%--                <input class="border-solid" type="text" name="address" placeholder="Enter address" required/><br>--%>
-<%--                <label>Position:</label><br>--%>
-<%--                <input class="border-solid" type="text" name="position" placeholder="Enter position" required/><br>--%>
-<%--                <label>Department:</label><br>--%>
-<%--                <input class="border-solid" type="text" name="department" placeholder="Enter department" required/><br>--%>
+                <label>Address:</label><br>
+                <input class="border-solid" type="text" name="address" placeholder="Enter address" required/><br>
+                <label>Position:</label><br>
+                <input class="border-solid" type="text" name="position" placeholder="Enter position" required/><br>
+                <label>Department:</label><br>
+                <input class="border-solid" type="text" name="department" placeholder="Enter department" required/><br>
                 <button class="bg-gray" type="submit">Submit</button><br>
                 <button><a href="/finalTest_war_exploded/create">Refresh</a></button>
             </form>

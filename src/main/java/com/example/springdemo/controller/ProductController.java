@@ -7,33 +7,34 @@ Time: 8:15 PM
 ProjectName: spring-demo*/
 
 import com.example.springdemo.dto.ProductDto;
-import com.example.springdemo.entity.Product;
-import com.example.springdemo.repository.impl.ProductServiceImpl;
 import com.example.springdemo.service.ProductService;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Objects;
 
-@Controller
+@RestController
+@RequestMapping(value = "api/v1")
 public class ProductController extends BaseController{
+    private static Logger logger = LogManager.getLogger(ProductController.class);
     @Autowired
     private ProductService productService;
-    @GetMapping(value = "/products")
-    public ModelAndView gets(HttpServletRequest request){
-        ProductDto criteria = new ProductDto();
-            criteria.setPageSize(commonProperties.getDefaultPageSize());
-            criteria.setPageNumber(commonProperties.getDefaultPageNumber());
-            ModelAndView view = new ModelAndView("pages/list.jsp");
-            List<ProductDto> products = productService.gets(criteria);
-            view.addObject("products", products);
-            return view;
+    @PostMapping(value = "/products")
+    public ResponseEntity<?> gets(@RequestBody ProductDto criteria, HttpServletRequest request){
+//        if (criteria.getPageSize() == null ||  criteria.getPageSize() <= 0) {
+//            criteria.setPageSize(commonProperties.getDefaultPageSize());
+//        }
+//        if (criteria.getPageNumber() == null || criteria.getPageNumber() < 0) {
+//            criteria.setPageNumber(commonProperties.getDefaultPageNumber());
+//        }
+            return ResponseEntity.ok(productService.gets(criteria));
     }
     @GetMapping(value = "/findProductByName")
     public ResponseEntity<?> findProductByName(@RequestParam String productName, HttpServletRequest request){
@@ -45,33 +46,16 @@ public class ProductController extends BaseController{
     }
 
     @GetMapping("/product")
-    public ModelAndView get(@RequestParam Long id, HttpServletRequest request){
-        ModelAndView view = new ModelAndView("pages/details.jsp");
+    public ResponseEntity<?> get(@RequestParam Long id, HttpServletRequest request){
+        logger.info("Process: request product by productId = {}", id);
         ProductDto productDto = productService.getById(id);
-        view.addObject("product", productDto);
-        return view;
+        return ResponseEntity.ok(productDto);
     }
 
-    @GetMapping("/create")
-    public ModelAndView get(@RequestParam ProductDto productDto, Long id, HttpServletRequest request){
-        ProductDto product = new ProductDto();
-        if (!Objects.isNull(id) && id > 0){
-            product = productService.getById(id);
-        }
-        ModelAndView view = new ModelAndView("pages/createForm.jsp");
-        view.addObject("product", product);
-        return view;
-    }
 
     @PostMapping("/create")
-    public ModelAndView get(@RequestBody ProductDto productDto, HttpServletRequest request){
+    public ResponseEntity<ProductDto> get(@ModelAttribute ProductDto productDto, HttpServletRequest request){
         ProductDto product = productService.save(productDto);
-        if (Objects.isNull(product)){
-            ModelAndView view = new ModelAndView("pages/createForm.jsp");
-            return view;
-        }
-        ModelAndView view = new ModelAndView("pages/createForm.jsp");
-        view.addObject("productDto", product);
-        return view;
+        return ResponseEntity.ok(product);
     }
 }

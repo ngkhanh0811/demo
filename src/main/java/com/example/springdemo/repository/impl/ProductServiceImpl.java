@@ -6,11 +6,13 @@ Time: 8:10 PM
 
 ProjectName: spring-demo*/
 
+import com.example.springdemo.exception.BusinessException;
 import com.example.springdemo.dto.ProductDto;
 import com.example.springdemo.entity.Product;
 import com.example.springdemo.mapper.ProductMapper;
 import com.example.springdemo.repository.ProductRepository;
 import com.example.springdemo.service.ProductService;
+import com.example.springdemo.spec.ProductSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,10 +29,15 @@ public class ProductServiceImpl implements ProductService {
     private ProductMapper mapper;
     @Autowired
     private ProductRepository repo;
+    @Autowired
+    private ProductSpecification spec;
     @Override
     public List<ProductDto> gets(ProductDto criteria) {
+        if (criteria.getPageNumber() < 0 | criteria.getPageSize() < 0){
+            throw new BusinessException("201", "INVALID PARAMETERS");
+        }
         Pageable pageable = PageRequest.of(criteria.getPageNumber(), criteria.getPageSize());
-        Page<Product> productList = repo.findAll(pageable);
+        Page<Product> productList = repo.findAll(spec.filter(criteria),pageable);
         return productList.getContent()
                 .stream()
                 .map(mapper::entityToDto)
